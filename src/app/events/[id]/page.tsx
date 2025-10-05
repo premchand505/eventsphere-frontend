@@ -22,16 +22,14 @@ type Event = {
 
 
 export default function EventDetailPage() {
-  const params = useParams();
-  const router = useRouter();
+ const params = useParams();
   const eventId = params.id as string;
-  
-  // Get user and token from our global Zustand store
   const { user, token } = useAuthStore();
-  
   const queryClient = useQueryClient();
 
+
   // --- DATA FETCHING with useQuery ---
+ 
   const {
     data: event,
     isLoading,
@@ -39,33 +37,56 @@ export default function EventDetailPage() {
   } = useQuery({
     queryKey: ['event', eventId],
     queryFn: async (): Promise<Event> => {
-      const { data } = await apiClient.get(`/events/${eventId}`);
+      const { data } = await apiClient.get(`/events/${eventId}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       return data;
     },
     enabled: !!eventId,
   });
 
-  // --- DATA MUTATION (Action) with useMutation ---
-  const registrationMutation = useMutation({
-    mutationFn: () => {
-      return apiClient.post(`/events/${eventId}/register`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  // --- Updated DATA MUTATION (Action) with useMutation ---
+   const registrationMutation = useMutation({
+    mutationFn: async () => {
+      // Logic to decide which endpoint to call
+      if (event && event.price > 0) {
+        // Paid event: get Stripe session URL
+        const response = await apiClient.post(`/payments/checkout-session/${eventId}`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        return { isPaid: true, ...response.data };
+      } else {
+        // Free event: register directly
+        const response = await apiClient.post(`/events/${eventId}/register`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        return { isPaid: false, ...response.data };
+      }
     },
-    onSuccess: () => {
-      toast.success('Successfully registered for the event!');
-      // Optional: Invalidate queries to refetch data if needed
-      queryClient.invalidateQueries({ queryKey: ['event', eventId] });
+    onSuccess: (data) => {
+      if (data.isPaid) {
+        // For paid events, redirect to Stripe's URL
+        window.location.href = data.url;
+      } else {
+        // For free events, show toast and refetch data
+        toast.success('Successfully registered for the event!');
+        queryClient.invalidateQueries({ queryKey: ['event', eventId] });
+      }
     },
     onError: (error: any) => {
-      // We can use the error message from our backend API
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      const errorMessage = error.response?.data?.message || 'Action failed. Please try again.';
       toast.error(errorMessage);
     }
   });
 
+   if (isLoading) return <p className="text-center p-8">Loading event details...</p>;
+  if (isError) return <p className="text-center p-8 text-red-500">Failed to load event.</p>;
+
+  // THE FIX IS HERE 👇
+  // Add a final guard clause to ensure 'event' is not null/undefined from this point on.
+  if (!event) return null;
+
   const renderRegistrationButton = () => {
-    // ... 'if (!user)' and 'if (user.id === event?.host.id)' cases remain the same ...
     if (!user) {
       return (
         <Link href="/signin" className="w-full text-center bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
@@ -73,8 +94,7 @@ export default function EventDetailPage() {
         </Link>
       );
     }
-    
-    if (user.id === event?.host.id) {
+ if (user.id === event.host.id) {
       return (
         <p className="text-center font-semibold text-gray-600 bg-gray-200 py-2 px-4 rounded">
           You are the host of this event.
@@ -82,8 +102,7 @@ export default function EventDetailPage() {
       );
     }
     
-    // NEW CASE: Check if the user is already registered.
-    if (event?.isRegistered) {
+    if (event.isRegistered) {
       return (
         <button
           disabled
@@ -94,34 +113,33 @@ export default function EventDetailPage() {
       );
     }
 
-    // Default case: User can register
+    const buttonText = event.price > 0 
+      ? `Pay to Register ($${event.price.toFixed(2)})` 
+      : 'Register for Free';
+
     return (
       <button
         onClick={() => registrationMutation.mutate()}
         disabled={registrationMutation.isPending}
         className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 disabled:bg-gray-400"
       >
-        {registrationMutation.isPending ? 'Registering...' : 'Register for Event'}
+        {registrationMutation.isPending ? 'Processing...' : buttonText}
       </button>
     );
   };
 
-  if (isLoading) return <p className="text-center p-8">Loading event details...</p>;
-  if (isError) return <p className="text-center p-8 text-red-500">Failed to load event.</p>;
-
   return (
     <div className="container mx-auto p-8">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-4xl font-bold mb-4">{event?.title}</h1>
-        <p className="text-lg text-gray-600 mb-6">{event?.description}</p>
+        <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
+        <p className="text-lg text-gray-600 mb-6">{event.description}</p>
         <div className="space-y-3 text-gray-800 mb-8">
-          <p><strong>Location:</strong> {event?.location}</p>
-          <p><strong>Date:</strong> {new Date(event?.date ?? '').toLocaleString()}</p>
-          <p><strong>Price:</strong> ${event?.price.toFixed(2)}</p>
-          <p><strong>Capacity:</strong> {event?.capacity} attendees</p>
+          <p><strong>Location:</strong> {event.location}</p>
+          <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
+          <p><strong>Price:</strong> ${event.price.toFixed(2)}</p>
+          <p><strong>Capacity:</strong> {event.capacity} attendees</p>
         </div>
         
-        {/* Render our smart button */}
         <div className="mt-6">
           {renderRegistrationButton()}
         </div>
