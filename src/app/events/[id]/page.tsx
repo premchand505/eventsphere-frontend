@@ -16,11 +16,10 @@ type Event = {
   date: string;
   price: number;
   capacity: number;
-  host: {
-    id: string;
-    email: string;
-  };
+   host: { id: string; email: string };
+  isRegistered?: boolean; // Add this line
 };
+
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -66,7 +65,7 @@ export default function EventDetailPage() {
   });
 
   const renderRegistrationButton = () => {
-    // Case 1: User is not logged in
+    // ... 'if (!user)' and 'if (user.id === event?.host.id)' cases remain the same ...
     if (!user) {
       return (
         <Link href="/signin" className="w-full text-center bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
@@ -75,7 +74,6 @@ export default function EventDetailPage() {
       );
     }
     
-    // Case 2: User is the host of the event
     if (user.id === event?.host.id) {
       return (
         <p className="text-center font-semibold text-gray-600 bg-gray-200 py-2 px-4 rounded">
@@ -84,9 +82,19 @@ export default function EventDetailPage() {
       );
     }
     
-    // TODO: We will add a check here later to see if the user is ALREADY registered.
+    // NEW CASE: Check if the user is already registered.
+    if (event?.isRegistered) {
+      return (
+        <button
+          disabled
+          className="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded"
+        >
+          You are already registered
+        </button>
+      );
+    }
 
-    // Case 3: User can register
+    // Default case: User can register
     return (
       <button
         onClick={() => registrationMutation.mutate()}
