@@ -24,7 +24,7 @@ export default function PaymentSuccessPage() {
           Payment Successful!
         </h1>
         <p className="text-lg text-gray-700 mb-6">
-          Thank you for your registration. You're all set! Your registration has been confirmed.
+          Thank you for your registration. You are all set! Your registration has been confirmed.
         </p>
         <p className="text-gray-500">
           You will be redirected to the homepage in 5 seconds.

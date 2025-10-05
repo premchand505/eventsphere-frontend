@@ -28,7 +28,7 @@ export default function AuthCallbackPage() {
 
         toast.success('Signed in successfully!');
         router.push('/'); // 3. Redirect to the homepage
-      } catch (error) {
+      } catch  {
         toast.error('Failed to complete login. Please try again.');
         router.push('/signin');
       }

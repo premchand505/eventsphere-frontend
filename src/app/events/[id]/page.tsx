@@ -1,8 +1,10 @@
 'use client';
 import { useEffect } from 'react';
+import { AxiosError } from 'axios'; // 2. Import AxiosError
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api/axios';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -92,8 +94,9 @@ export default function EventDetailPage() {
         queryClient.invalidateQueries({ queryKey: ['event', eventId] });
       }
     },
-    onError: (error: any) => {
-      const errorMessage = error.response?.data?.message || 'Action failed. Please try again.';
+    onError: (error: AxiosError) => {
+      const data = error.response?.data as { message?: string };
+      const errorMessage = data?.message || 'Action failed. Please try again.';
       toast.error(errorMessage);
     }
   });

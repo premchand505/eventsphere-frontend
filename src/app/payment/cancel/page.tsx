@@ -8,7 +8,7 @@ export default function PaymentCancelPage() {
           Payment Canceled
         </h1>
         <p className="text-lg text-gray-700 mb-6">
-          Your payment process was canceled. You have not been charged. You can return to the event page and try again if you'd like.
+          Your payment process was canceled. You have not been charged. You can return to the event page and try again if you like.
         </p>
         <Link
           href="/"
