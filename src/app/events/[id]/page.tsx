@@ -1,12 +1,13 @@
 'use client';
-
+import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api/axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-
+import { useSocketStore } from '@/stores/socketStore';
+import ChatRoom from '@/components/chat/ChatRoom';
 // Update the Event type to include the 'host' object
 type Event = {
   id: string;
@@ -26,6 +27,7 @@ export default function EventDetailPage() {
   const eventId = params.id as string;
   const { user, token } = useAuthStore();
   const queryClient = useQueryClient();
+   const { socket, isConnected } = useSocketStore();
 
 
   // --- DATA FETCHING with useQuery ---
@@ -44,6 +46,23 @@ export default function EventDetailPage() {
     },
     enabled: !!eventId,
   });
+
+  useEffect(() => {
+    // Make sure we have a socket connection and the event data
+    if (socket && isConnected && event?.isRegistered) {
+      // Join the room when the component mounts
+      socket.emit('joinRoom', eventId);
+      console.log(`Attempting to join room: ${eventId}`);
+
+      // Leave the room when the component unmounts
+      return () => {
+        socket.emit('leaveRoom', eventId);
+        console.log(`Leaving room: ${eventId}`);
+      };
+    }
+  }, [socket, isConnected, event?.isRegistered, eventId]);
+
+
 
   // --- Updated DATA MUTATION (Action) with useMutation ---
    const registrationMutation = useMutation({
@@ -127,6 +146,9 @@ export default function EventDetailPage() {
       </button>
     );
   };
+  
+
+  
 
   return (
     <div className="container mx-auto p-8">
@@ -143,7 +165,13 @@ export default function EventDetailPage() {
         <div className="mt-6">
           {renderRegistrationButton()}
         </div>
+
+
+        {/* 2. Conditionally render the ChatRoom if the user is registered */}
+        {event.isRegistered && <ChatRoom eventId={eventId} />}
       </div>
     </div>
   );
 }
+
+
