@@ -14,7 +14,7 @@ export default function SocketInitializer() {
   useEffect(() => {
     // If there is a token and no active socket connection, create one.
     if (token && !socket) {
-      const newSocket = io('http://localhost:3000', {
+      const newSocket = io(process.env.NEXT_PUBLIC_API_BASE_URL!, {
         auth: {
           token: token,
         },
