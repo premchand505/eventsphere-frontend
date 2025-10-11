@@ -50,7 +50,7 @@ export default function ChatRoom({ eventId }: { eventId: string }) {
 
   return (
     <div className="mt-8 border rounded-lg shadow-inner">
-      <h3 className="text-xl font-semibold p-4 border-b bg-gray-50">Event Chat</h3>
+      <h3 className="text-xl font-semibold p-4 border-b rounded-lg bg-gray-50">Event Chat</h3>
       {/* Message Display Area */}
       <div className="p-4 h-80 overflow-y-auto space-y-4">
         {messages.map((msg, index) => (
@@ -82,7 +82,7 @@ export default function ChatRoom({ eventId }: { eventId: string }) {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
-          className="flex-grow input-style"
+          className="flex-grow text-white input-style"
         />
         <button
           type="submit"

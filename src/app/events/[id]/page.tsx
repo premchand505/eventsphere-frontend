@@ -155,14 +155,14 @@ export default function EventDetailPage() {
 
   return (
     <div className="container mx-auto p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
-        <p className="text-lg text-gray-600 mb-6">{event.description}</p>
+      <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple-700 to-purple-400 rounded-lg shadow-lg p-8">
+        <h1 className="text-4xl text-white font-bold mb-4">{event.title}</h1>
+        <p className="text-lg text-white mb-6">{event.description}</p>
         <div className="space-y-3 text-gray-800 mb-8">
-          <p><strong>Location:</strong> {event.location}</p>
-          <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
-          <p><strong>Price:</strong> ${event.price.toFixed(2)}</p>
-          <p><strong>Capacity:</strong> {event.capacity} attendees</p>
+          <p className='text-black'><strong>Location:</strong> {event.location}</p>
+          <p className='text-black'><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
+          <p className='text-black'><strong>Price:</strong> ${event.price.toFixed(2)}</p>
+          <p className='text-black'><strong>Capacity:</strong> {event.capacity} attendees</p>
         </div>
         
         <div className="mt-6">

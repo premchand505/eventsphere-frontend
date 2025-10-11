@@ -17,24 +17,24 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav className="bg-black text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold">
+        <Link href="/" className="ml-10 text-3xl font-extrabold">
           Eventsphere
         </Link>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center mr-10">
           {/* 2. Conditionally render links based on the presence of a token */}
           {token ? (
             <>
              {/* Add this "Create Event" link for logged-in users */}
-              <Link href="/events/create" className="hover:text-gray-300">
+              <Link href="/events/create" className="text-purple-500">
                 Create Event
               </Link>
               {/* If logged in, show user email and a Logout button */}
-              <span className="text-sm">{user?.email}</span>
+              <span className="text-sm hover:text-purple-600">{user?.email}</span>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-md text-sm font-medium"
+                className="bg-purple-100 hover:bg-purple-600  text-black px-3 py-1 rounded-md text-sm font-medium"
               >
                 Log Out
               </button>

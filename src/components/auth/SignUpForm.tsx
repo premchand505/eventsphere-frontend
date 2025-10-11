@@ -55,7 +55,7 @@ export default function SignUpForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-white"
         >
           Email
         </label>
@@ -63,7 +63,7 @@ export default function SignUpForm() {
           id="email"
           type="email"
           {...register('email')}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full text-white px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -72,7 +72,7 @@ export default function SignUpForm() {
       <div>
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-white"
         >
           Password
         </label>
@@ -80,7 +80,7 @@ export default function SignUpForm() {
           id="password"
           type="password"
           {...register('password')}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full px-3 text-white  py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         />
         {errors.password && (
           <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>

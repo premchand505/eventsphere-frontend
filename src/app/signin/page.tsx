@@ -5,8 +5,8 @@ export default function SignInPage() {
   const googleAuthUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`;
 
   return (
-    <div className="container mx-auto p-8 max-w-md">
-      <h1 className="text-3xl font-bold mb-6 text-center">Sign In</h1>
+    <div className="container mx-auto p-8  bg-violet-700 rounded-xl max-w-md">
+      <h1 className="text-3xl text-white font-bold mb-6 text-center">Sign In</h1>
       <SignInForm />
 
       {/* --- Visual Separator --- */}
